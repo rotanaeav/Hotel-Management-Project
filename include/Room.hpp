@@ -14,5 +14,5 @@ public:
     std::string getId() const;
     std::string getType() const;
     bool isAvailable() const;
-    void setAvailability(bool status);
+    void setAvailable(bool status);
 };

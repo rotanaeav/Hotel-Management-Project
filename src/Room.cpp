@@ -6,4 +6,4 @@ Room::Room(std::string id, std::string type, bool available)
 std::string Room::getId() const { return id; }
 std::string Room::getType() const { return type; }
 bool Room::isAvailable() const { return available; }
-void Room::setAvailability(bool status) { available = status; }
+void Room::setAvailable(bool status) { available = status; }

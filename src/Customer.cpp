@@ -2,9 +2,18 @@
 #include <iostream>
 #include <iomanip>
 
-Customer::Customer(std::string name, std::string gender, int age, std::string room, std::string phone)
-    : name(name), gender(gender), age(age), room(room), phone(phone) {}
+// init id:
+int Customer::idCounter = 1;
 
+Customer::Customer(std::string name, std::string gender, int age, std::string room, std::string phone)
+    : name(name), gender(gender), age(age), room(room), phone(phone)
+{
+    std::ostringstream oss;
+    oss << "C" << std::setw(3) << std::setfill('0') << idCounter++;
+    id = oss.str();
+}
+
+std::string Customer::getId() const { return id; }
 std::string Customer::getName() const { return name; }
 std::string Customer::getGender() const { return gender; }
 std::string Customer::getRoom() const { return room; }
@@ -16,7 +25,8 @@ void Customer::setAge(int age) { this->age = age; }
 
 void Customer::displayRow() const
 {
-    std::cout << std::left << std::setw(10) << name
+    std::cout << std::left << std::setw(10) << id
+              << std::setw(10) << name
               << std::setw(8) << gender
               << std::setw(6) << age
               << std::setw(8) << room

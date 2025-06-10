@@ -7,18 +7,23 @@
 #include "MenuUtils.hpp"
 #include "ExcelUtils.hpp"
 #include "User.hpp"
-
-// Initialize a static list of rooms
-std::vector<Room> initializeRooms()
+// our room:
+std::vector<Room> initializeRooms(const std::string &filename)
 {
-    return {
-        Room("R101", "Single", true),
-        Room("R102", "Single", true),
-        Room("R103", "Single", true),
-        Room("R104", "Single", true)};
-}
+    std::vector<Room> rooms = roomsFromFile(filename);
+    // default
+    if (rooms.empty())
+    {
+        rooms = {
+            Room("R101", "Single", true),
+            Room("R102", "Single", true),
+            Room("R103", "Single", true),
+            Room("R104", "Single", true)};
+        roomToFile(rooms, filename);
+    }
 
-// Display room availability
+    return rooms;
+}
 void showRooms(const std::vector<Room> &rooms)
 {
     std::cout << "\033[1;33m\nAvailable Rooms:\033[0m\n";
@@ -33,8 +38,6 @@ void showRooms(const std::vector<Room> &rooms)
                   << std::setw(15) << (room.isAvailable() ? "Available" : "Not Available") << "\n";
     }
 }
-
-// Book a room for a new customer
 void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string roomId;
@@ -55,13 +58,10 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
         return;
     }
 
-    // Collect customer info
-    std::string name, id, gender, phone;
+    std::string name, gender, phone;
     int age;
     std::cout << "Enter Name: ";
     std::cin >> name;
-    std::cout << "Enter ID: ";
-    std::cin >> id;
     std::cout << "Enter Gender: ";
     std::cin >> gender;
     std::cout << "Enter Age: ";
@@ -69,13 +69,11 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
     std::cout << "Enter Phone: ";
     std::cin >> phone;
 
-    // Create customer and mark room booked
-    customers.emplace_back(name, id, gender, age, roomId, phone);
-    it->setAvailability(false);
+    customers.emplace_back(name, gender, age, roomId, phone);
+    it->setAvailable(false);
     std::cout << "\033[1;32mRoom booked successfully!\033[0m\n";
 }
 
-// Menu for regular users
 void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     int choice;
@@ -96,7 +94,6 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
     } while (choice != 3);
 }
 
-// Menu for admin users
 void adminMenu(std::vector<Customer> &customers)
 {
     int choice;
@@ -108,13 +105,11 @@ void adminMenu(std::vector<Customer> &customers)
         switch (choice)
         {
         case 1:
-        { // Add Customer
-            std::string name, id, gender, room, phone;
+        {
+            std::string name, gender, room, phone;
             int age;
             std::cout << "Enter Name: ";
             std::cin >> name;
-            std::cout << "Enter ID: ";
-            std::cin >> id;
             std::cout << "Enter Gender: ";
             std::cin >> gender;
             std::cout << "Enter Age: ";
@@ -123,28 +118,23 @@ void adminMenu(std::vector<Customer> &customers)
             std::cin >> room;
             std::cout << "Enter Phone: ";
             std::cin >> phone;
-            customers.emplace_back(name, id, gender, age, room, phone);
+            customers.emplace_back(name, gender, age, room, phone);
             break;
         }
         case 2: // View Customers
-            // displayPaginatedCustomers(customers);
+
             break;
-        case 3:
-        { // Delete Customer
-            std::string delId;
-            std::cout << "Enter ID to delete: ";
-            std::cin >> delId;
-            // deleteCustomer(customers, delId);
+        case 3: // Delete Customer
+
             break;
-        }
         case 4: // Search Customer
-            // searchCustomer(customers);
+
             break;
         case 5: // Update Customer
-            // updateCustomer(customers);
+
             break;
-        case 6: // Sort Customers
-            // sortCustomers(customers);
+        case 6: // Sort Customers (ID and ID room)
+
             break;
         case 7: // Logout
             return;
@@ -154,19 +144,18 @@ void adminMenu(std::vector<Customer> &customers)
 
 int main()
 {
-    // Load existing customers and initialize rooms
     std::vector<Customer> customers = loadFromFile("customers.xlsx");
-    std::vector<Room> rooms = initializeRooms();
+    std::vector<Room> rooms = initializeRooms("rooms.xlsx");
 
-    int mainChoice;
+    int option;
     do
     {
         showMainMenu();
         std::cout << "Choose: ";
-        std::cin >> mainChoice;
-        switch (mainChoice)
+        std::cin >> option;
+        switch (option)
         {
-        case 1: // Admin Login
+        case 1:
             if (login("admin"))
             {
                 adminMenu(customers);
@@ -176,7 +165,7 @@ int main()
                 std::cout << "\033[1;31mLogin failed.\033[0m\n";
             }
             break;
-        case 2: // User Register/Login
+        case 2:
             if (registerOrLoginUser())
             {
                 userMenu(customers, rooms);
@@ -187,9 +176,9 @@ int main()
             }
             break;
         }
-    } while (mainChoice != 3);
+    } while (option != 3);
 
-    // Save before exit
     saveToFile(customers, "customers.xlsx");
+    roomToFile(rooms, "rooms.xlsx");
     return 0;
 }
