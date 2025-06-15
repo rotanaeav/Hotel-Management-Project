@@ -7,6 +7,7 @@
 #include "MenuUtils.hpp"
 #include "ExcelUtils.hpp"
 #include "User.hpp"
+
 // our room:
 std::vector<Room> initializeRooms(const std::string &filename)
 {
@@ -73,6 +74,48 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
     it->setAvailable(false);
     std::cout << "\033[1;32mRoom booked successfully!\033[0m\n";
 }
+void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
+{
+    int totalPages = (customers.size() + pageSize - 1) / pageSize;
+    int currentPage = 0;
+    char next;
+
+    do
+    {
+        system("cls");
+        std::cout << "\033[1;33mCustomer List (Page " << currentPage + 1 << " of " << totalPages << "):\033[0m\n";
+
+        // Header
+        std::cout << "\033[1;36m" << std::left
+                  << std::setw(15) << "Customer ID"
+                  << std::setw(20) << "Name"
+                  << std::setw(10) << "Gender"
+                  << std::setw(5) << "Age"
+                  << std::setw(10) << "Room"
+                  << std::setw(15) << "Phone" << "\033[0m\n";
+        std::cout << "\033[1;37m---------------------------------------------------------------------\033[0m\n";
+
+        // customer
+        int start = currentPage * pageSize;
+        int end = std::min(start + pageSize, (int)customers.size());
+
+        for (int i = start; i < end; ++i)
+        {
+            customers[i].displayRow();
+        }
+
+        std::cout << "\n\033[1;36mPress n for next, p for previous, q to quit: \033[0m";
+        std::cin >> next;
+
+        if (next == 'n' && currentPage < totalPages - 1)
+            ++currentPage;
+        else if (next == 'p' && currentPage > 0)
+            --currentPage;
+        else if (next == 'q')
+            break;
+
+    } while (true);
+}
 
 void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
@@ -121,9 +164,11 @@ void adminMenu(std::vector<Customer> &customers)
             customers.emplace_back(name, gender, age, room, phone);
             break;
         }
-        case 2: // View Customers
-
+        case 2:
+        {
+            showCustomers(customers);
             break;
+        }
         case 3: // Delete Customer
 
             break;
@@ -141,7 +186,6 @@ void adminMenu(std::vector<Customer> &customers)
         }
     } while (true);
 }
-
 int main()
 {
     std::vector<Customer> customers = loadFromFile("customers.xlsx");

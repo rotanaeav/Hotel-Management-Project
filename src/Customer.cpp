@@ -25,10 +25,10 @@ void Customer::setAge(int age) { this->age = age; }
 
 void Customer::displayRow() const
 {
-    std::cout << std::left << std::setw(10) << id
-              << std::setw(10) << name
-              << std::setw(8) << gender
-              << std::setw(6) << age
-              << std::setw(8) << room
-              << std::setw(12) << phone << "\n";
+    std::cout << std::left << std::setw(15) << id
+              << std::setw(20) << name
+              << std::setw(10) << gender
+              << std::setw(5) << age
+              << std::setw(10) << room
+              << std::setw(15) << phone << "\n";
 }

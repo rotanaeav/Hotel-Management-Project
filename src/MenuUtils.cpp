@@ -12,6 +12,7 @@ void showMainMenu()
 void showAdminMenu()
 {
     std::cout << "\n\033[1;36m--- ADMIN MENU ---\033[0m\n";
+    std::cout << "\n";
     std::cout << "1. Add Customer\n";
     std::cout << "2. View All Customers\n";
     std::cout << "3. Delete Customer\n";
@@ -24,6 +25,7 @@ void showAdminMenu()
 void showUserMenu()
 {
     std::cout << "\n\033[1;36m--- MENU ---\033[0m\n";
+    std::cout << "\n";
     std::cout << "1. Show Room List\n";
     std::cout << "2. Book Room\n";
     std::cout << "3. Exit\n";
