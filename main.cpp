@@ -1,18 +1,17 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <iomanip>
 #include "Customer.hpp"
 #include "Room.hpp"
 #include "MenuUtils.hpp"
 #include "ExcelUtils.hpp"
 #include "User.hpp"
-
-// our room:
+#include "Input.hpp"
+#include <iomanip>
+// Init room
 std::vector<Room> initializeRooms(const std::string &filename)
 {
     std::vector<Room> rooms = roomsFromFile(filename);
-    // default
+    // default if no rooms loaded
     if (rooms.empty())
     {
         rooms = {
@@ -20,60 +19,11 @@ std::vector<Room> initializeRooms(const std::string &filename)
             Room("R102", "Single", true),
             Room("R103", "Single", true),
             Room("R104", "Single", true)};
-        roomToFile(rooms, filename);
+        roomToFile(rooms, filename); // Save rooms to file
     }
-
     return rooms;
 }
-void showRooms(const std::vector<Room> &rooms)
-{
-    std::cout << "\033[1;33m\nAvailable Rooms:\033[0m\n";
-    std::cout << std::left
-              << std::setw(10) << "Room ID"
-              << std::setw(10) << "Type"
-              << std::setw(15) << "Availability" << "\n";
-    for (const auto &room : rooms)
-    {
-        std::cout << std::setw(10) << room.getId()
-                  << std::setw(10) << room.getType()
-                  << std::setw(15) << (room.isAvailable() ? "Available" : "Not Available") << "\n";
-    }
-}
-void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
-{
-    std::string roomId;
-    std::cout << "Enter Room ID to book: ";
-    std::cin >> roomId;
 
-    auto it = std::find_if(rooms.begin(), rooms.end(), [&](const Room &r)
-                           { return r.getId() == roomId; });
-
-    if (it == rooms.end())
-    {
-        std::cout << "\033[1;31mRoom not found.\033[0m\n";
-        return;
-    }
-    if (!it->isAvailable())
-    {
-        std::cout << "\033[1;31mRoom is not available.\033[0m\n";
-        return;
-    }
-
-    std::string name, gender, phone;
-    int age;
-    std::cout << "Enter Name: ";
-    std::cin >> name;
-    std::cout << "Enter Gender: ";
-    std::cin >> gender;
-    std::cout << "Enter Age: ";
-    std::cin >> age;
-    std::cout << "Enter Phone: ";
-    std::cin >> phone;
-
-    customers.emplace_back(name, gender, age, roomId, phone);
-    it->setAvailable(false);
-    std::cout << "\033[1;32mRoom booked successfully!\033[0m\n";
-}
 void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 {
     int totalPages = (customers.size() + pageSize - 1) / pageSize;
@@ -95,7 +45,6 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
                   << std::setw(15) << "Phone" << "\033[0m\n";
         std::cout << "\033[1;37m---------------------------------------------------------------------\033[0m\n";
 
-        // customer
         int start = currentPage * pageSize;
         int end = std::min(start + pageSize, (int)customers.size());
 
@@ -116,41 +65,6 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 
     } while (true);
 }
-void addCustomer(std::vector<Customer> &customers)
-{
-    std::string name, gender, room, phone;
-    int age;
-    std::cout << "Enter Name: ";
-    std::cin >> name;
-    std::cout << "Enter Gender: ";
-    std::cin >> gender;
-    std::cout << "Enter Age: ";
-    std::cin >> age;
-    std::cout << "Enter Room: ";
-    std::cin >> room;
-    std::cout << "Enter Phone: ";
-    std::cin >> phone;
-    customers.emplace_back(name, gender, age, room, phone);
-}
-void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
-{
-    int choice;
-    do
-    {
-        showUserMenu();
-        std::cout << "Enter choice: ";
-        std::cin >> choice;
-        switch (choice)
-        {
-        case 1:
-            showRooms(rooms);
-            break;
-        case 2:
-            bookRoom(customers, rooms);
-            break;
-        }
-    } while (choice != 3);
-}
 void adminMenu(std::vector<Customer> &customers)
 {
     int choice;
@@ -163,7 +77,10 @@ void adminMenu(std::vector<Customer> &customers)
         {
         case 1:
         {
-            addCustomer(customers);
+            Customer newCustomer = input();
+            customers.push_back(newCustomer);
+            saveToFile(customers, "customers.xlsx"); // Save the updated customer list
+            std::cout << "\033[1;32mCustomer added successfully!\033[0m\n";
             break;
         }
         case 2:
@@ -171,27 +88,34 @@ void adminMenu(std::vector<Customer> &customers)
             showCustomers(customers);
             break;
         }
-        case 3: // Delete Customer
-
+        case 3:
+            // delete
             break;
-        case 4: // Search Customer
-
+        case 4:
+            // search customer
             break;
-        case 5: // Update Customer
-
+        case 5:
+            // edit Customer
             break;
-        case 6: // Sort Customers (ID and ID room)
-
+        case 6:
+            // Sort
             break;
         case 7: // Logout
             return;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+            break;
         }
     } while (true);
 }
+
 int main()
 {
-    std::vector<Customer> customers = loadFromFile("customers.xlsx");
+    system("cls");
+    UserAuth userAuth;
+
     std::vector<Room> rooms = initializeRooms("rooms.xlsx");
+    std::vector<Customer> customers = loadFromFile("customers.xlsx");
 
     int option;
     do
@@ -199,32 +123,81 @@ int main()
         showMainMenu();
         std::cout << "Choose: ";
         std::cin >> option;
+
         switch (option)
         {
         case 1:
-            if (login("admin"))
+        {
+            std::string username, password;
+            std::cout << "Enter Admin Username: ";
+            std::cin >> username;
+            std::cout << "Enter Admin Password: ";
+            std::cin >> password;
+
+            if (username == "admin" && password == "1234")
             {
+                std::cout << "Admin Login successful!\n";
                 adminMenu(customers);
             }
             else
             {
                 std::cout << "\033[1;31mLogin failed.\033[0m\n";
             }
-            break;
+        }
+        break;
+
         case 2:
-            if (registerOrLoginUser())
+        {
+            std::string username, password;
+            std::cout << "Enter Username: ";
+            std::cin >> username;
+            std::cout << "Enter Password: ";
+            std::cin >> password;
+
+            if (userAuth.login(username, password))
             {
+                std::cout << "Login successful!\n";
                 userMenu(customers, rooms);
             }
             else
             {
-                std::cout << "\033[1;31mLogin failed.\033[0m\n";
+                std::cout << "Login failed. Do you want to register? (y/n): ";
+                char registerChoice;
+                std::cin >> registerChoice;
+
+                if (registerChoice == 'y' || registerChoice == 'Y')
+                {
+                    Customer newCustomer = input();
+                    if (userAuth.registerUser(newCustomer.getUsername(), newCustomer.getPassword(),
+                                              newCustomer.getName(), newCustomer.getGender(),
+                                              newCustomer.getAge(), newCustomer.getRoom(),
+                                              newCustomer.getPhone()))
+                    {
+                        std::cout << "Registration successful!\n";
+                        userMenu(customers, rooms);
+                    }
+                    else
+                    {
+                        std::cout << "Username already exists.\n";
+                    }
+                }
             }
+        }
+        break;
+
+        case 3: // Exit
+            std::cout << "Exiting the program...\n";
+            break;
+
+        default:
+            std::cout << "Invalid option. Please try again.\n";
             break;
         }
-    } while (option != 3);
+
+    } while (option != 3); // Continue the loop until the user chooses to exit
 
     saveToFile(customers, "customers.xlsx");
     roomToFile(rooms, "rooms.xlsx");
+
     return 0;
 }

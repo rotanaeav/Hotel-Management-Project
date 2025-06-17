@@ -22,7 +22,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(tabulate)
 
 # Add your main.cpp or other source files
-add_executable(ExcelTableApp main.cpp src/Customer.cpp src/Room.cpp src/User.cpp src/ExcelUtils.cpp src/MenuUtils.cpp
+add_executable(ExcelTableApp main.cpp src/Customer.cpp src/Room.cpp src/User.cpp src/ExcelUtils.cpp src/MenuUtils.cpp src/Input.cpp
 )
 # Tell the compiler where to find all the headers 
 target_include_directories(ExcelTableApp PRIVATE include )

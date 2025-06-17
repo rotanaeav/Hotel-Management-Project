@@ -1,23 +1,36 @@
 #include "User.hpp"
-#include <iostream>
+#include "ExcelUtils.hpp"
 
-bool login(const std::string &role)
-{
-    std::string user, pass;
-    std::cout << "Username: ";
-    std::cin >> user;
-    std::cout << "Password: ";
-    std::cin >> pass;
-    return (role == "admin" && user == "admin" && pass == "1234");
+UserAuth::UserAuth() {
+    loadUsersFromFile("customers.xlsx");
 }
 
-bool registerOrLoginUser()
-{
-    std::string user, pass;
-    std::cout << "Enter your name: ";
-    std::cin >> user;
-    std::cout << "Enter password: ";
-    std::cin >> pass;
-    // You can write to a file to store user credentials if needed
-    return true; // mock success
+bool UserAuth::login(const std::string& username, const std::string& password) {
+    for (const auto& customer : customers) {
+        if (customer.getUsername() == username && customer.getPassword() == password) {
+            return true;  // Login successful
+        }
+    }
+    return false;
+}
+
+bool UserAuth::registerUser(const std::string& username, const std::string& password, 
+                            const std::string& name, const std::string& gender, 
+                            int age, const std::string& room, const std::string& phone) {
+    for (const auto& customer : customers) {
+        if (customer.getUsername() == username) {
+            return false;
+        }
+    }
+    customers.emplace_back(username, password, name, gender, age, room, phone);
+    saveUsersToFile("customers.xlsx");
+    return true;
+}
+
+void UserAuth::loadUsersFromFile(const std::string& filename) {
+    customers = loadFromFile(filename); 
+}
+
+void UserAuth::saveUsersToFile(const std::string& filename) {
+    saveToFile(customers, filename);
 }
