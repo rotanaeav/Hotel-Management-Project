@@ -116,7 +116,22 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 
     } while (true);
 }
-
+void addCustomer(std::vector<Customer> &customers)
+{
+    std::string name, gender, room, phone;
+    int age;
+    std::cout << "Enter Name: ";
+    std::cin >> name;
+    std::cout << "Enter Gender: ";
+    std::cin >> gender;
+    std::cout << "Enter Age: ";
+    std::cin >> age;
+    std::cout << "Enter Room: ";
+    std::cin >> room;
+    std::cout << "Enter Phone: ";
+    std::cin >> phone;
+    customers.emplace_back(name, gender, age, room, phone);
+}
 void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     int choice;
@@ -136,7 +151,6 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
         }
     } while (choice != 3);
 }
-
 void adminMenu(std::vector<Customer> &customers)
 {
     int choice;
@@ -149,19 +163,7 @@ void adminMenu(std::vector<Customer> &customers)
         {
         case 1:
         {
-            std::string name, gender, room, phone;
-            int age;
-            std::cout << "Enter Name: ";
-            std::cin >> name;
-            std::cout << "Enter Gender: ";
-            std::cin >> gender;
-            std::cout << "Enter Age: ";
-            std::cin >> age;
-            std::cout << "Enter Room: ";
-            std::cin >> room;
-            std::cout << "Enter Phone: ";
-            std::cin >> phone;
-            customers.emplace_back(name, gender, age, room, phone);
+            addCustomer(customers);
             break;
         }
         case 2:
