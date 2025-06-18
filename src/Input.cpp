@@ -1,9 +1,8 @@
 #include "Input.hpp"
 #include <iostream>
-#include <string>
 Customer input()
 {
-    std::string username, password, name, gender, room, phone;
+    std::string username, password, name, gender, phone;
     int age;
 
     std::cout << "Enter Username: ";
@@ -16,9 +15,7 @@ Customer input()
     std::cin >> gender;
     std::cout << "Enter Age: ";
     std::cin >> age;
-    std::cout << "Enter Room: ";
-    std::cin >> room;
     std::cout << "Enter Phone: ";
     std::cin >> phone;
-    return Customer(username, password, name, gender, age, room, phone);
+    return Customer(username, password, name, gender, age, phone);
 }
