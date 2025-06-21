@@ -8,6 +8,9 @@
 #include "ExcelUtils.hpp"
 #include "User.hpp"
 #include "Input.hpp"
+#include <tabulate/table.hpp>
+#include "Color.hpp"
+using namespace tabulate;
 
 // Init room
 std::vector<Room> initializeRooms(const std::string &filename)
@@ -81,7 +84,7 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 void deleteCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string input;
-    std::cout << "Enter Customer Name or ID to delete: ";
+    std::cout << YELLOW << "Enter Customer Name or ID to delete: " << RESET;
     std::cin >> input;
 
     auto it = std::find_if(customers.begin(), customers.end(),
@@ -121,7 +124,7 @@ void deleteCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
 void searchCustomer(const std::vector<Customer> &customers)
 {
     std::string input;
-    std::cout << "Enter Customer ID or Name to search: ";
+    std::cout << YELLOW << "Enter Customer ID or Name to search: " << RESET;
     std::cin >> input;
 
     bool found = false;
@@ -152,22 +155,24 @@ void searchCustomer(const std::vector<Customer> &customers)
 void updateCustomer(std::vector<Customer> &customers)
 {
     std::string id;
-    std::cout << "Enter Customer ID to update: ";
+    std::cout << YELLOW << "Enter Customer ID to update: " << RESET;
     std::cin >> id;
 
     for (auto &c : customers)
     {
         if (c.getId() == id)
         {
-            std::cout << "Current Name: " << c.getName() << "\n";
-            std::cout << "Enter new name (or '.' to keep current): ";
+            std::cout << YELLOW << "Current Name: " << c.getName() << "\n"
+                      << RESET;
+            std::cout << YELLOW << "Enter new name (or '.' to keep current): " << RESET;
             std::string newName;
             std::cin >> newName;
             if (newName != ".")
                 c.setName(newName);
 
-            std::cout << "Current Age: " << c.getAge() << "\n";
-            std::cout << "Enter new age (or -1 to keep current): ";
+            std::cout << YELLOW << "Current Age: " << c.getAge() << "\n"
+                      << RESET;
+            std::cout << YELLOW << "Enter new age (or -1 to keep current): " << RESET;
             int newAge;
             std::cin >> newAge;
             if (newAge != -1)
@@ -205,7 +210,7 @@ void assignRoomToCustomer(std::vector<Customer> &customers, std::vector<Room> &r
     std::cout << "\n\033[1;33mAvailable Rooms:\033[0m\n";
     showRooms(rooms);
 
-    std::cout << "\nEnter Room ID to assign: ";
+    std::cout << YELLOW << "\nEnter Room ID to assign: " << RESET;
     std::cin >> roomId;
 
     // Find room
@@ -261,7 +266,7 @@ void sortCustomers(std::vector<Customer> &customers)
     }
 
     int option;
-    std::cout << "Sort by:\n1. Customer ID\n2. Name\n3. Room ID\nEnter choice: ";
+    std::cout << YELLOW << "Sort by:\n1. Customer ID\n2. Name\n3. Room ID\nEnter choice: " << RESET;
     std::cin >> option;
 
     if (option == 1)
@@ -281,11 +286,11 @@ void sortCustomers(std::vector<Customer> &customers)
     }
     else
     {
-        std::cout << "\033[1;31mInvalid option.\033[0m\n";
+        std::cout << GREEN << "Invalid option." << RESET;
         return;
     }
 
-    std::cout << "\033[1;32mCustomers sorted successfully.\033[0m\n";
+    std::cout << GREEN << "Customers sorted successfully." << RESET;
     showCustomers(customers);
     saveToFile(customers, "customers.xlsx");
 }
@@ -295,10 +300,10 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
     std::string roomId;
 
     // Show available rooms first
-    std::cout << "\n\033[1;33mAvailable Rooms:\033[0m\n";
+    std::cout << GREEN << "Available Rooms:" << RESET;
     showRooms(rooms);
 
-    std::cout << "\nEnter Room ID to book: ";
+    std::cout << YELLOW << "\nEnter Room ID to book: " << RESET;
     std::cin >> roomId;
 
     auto it = std::find_if(rooms.begin(), rooms.end(), [&](Room &r)
@@ -306,12 +311,12 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
 
     if (it == rooms.end())
     {
-        std::cout << "\033[1;31mRoom not found.\033[0m\n";
+        std::cout << RED << "Room not found." << RESET;
         return;
     }
     if (!it->isAvailable())
     {
-        std::cout << "\033[1;31mRoom is not available.\033[0m\n";
+        std::cout << RED << "Room is not available." << RESET;
         return;
     }
 
@@ -323,7 +328,7 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
     saveToFile(customers, "customers.xlsx");
     roomToFile(rooms, "rooms.xlsx");
 
-    std::cout << "\033[1;32mRoom booked successfully!\033[0m\n";
+    std::cout << GREEN << "Room booked successfully!" << RESET;
 }
 
 void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
@@ -332,7 +337,7 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
     do
     {
         showAdminMenu();
-        std::cout << "Enter choice: ";
+        std::cout << YELLOW << "Enter choice: " << RESET;
         std::cin >> choice;
 
         switch (choice)
@@ -342,7 +347,7 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
             Customer newCustomer = input();
             customers.push_back(newCustomer);
             saveToFile(customers, "customers.xlsx");
-            std::cout << "\033[1;32mCustomer added successfully!\033[0m\n";
+            std::cout << GREEN << "Customer added successfully!" << RESET;
             break;
         }
         case 2:
@@ -378,12 +383,13 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
         case 8: // Logout
             return;
         default:
-            std::cout << "Invalid choice. Please try again.\n";
+            std::cout << RED << "Invalid choice. Please try again.\n"
+                      << RESET;
             break;
         }
 
         // Pause to let user see the result
-        std::cout << "\nPress Enter to continue...";
+        std::cout << GREEN << "\nPress Enter to continue..." << RESET;
         std::cin.ignore();
         std::cin.get();
 
@@ -396,7 +402,7 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
     do
     {
         showUserMenu();
-        std::cout << "Enter choice: ";
+        std::cout << YELLOW << "Enter choice: " << RESET;
         std::cin >> choice;
 
         switch (choice)
@@ -408,16 +414,18 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
             bookRoom(customers, rooms);
             break;
         case 3:
-            std::cout << "Exiting the user menu...\n";
+            std::cout << GREEN << "Exiting the user menu...\n"
+                      << RESET;
             break;
         default:
-            std::cout << "Invalid choice. Please try again.\n";
+            std::cout << RED << "Invalid choice. Please try again.\n"
+                      << RESET;
             break;
         }
 
         if (choice != 3)
         {
-            std::cout << "\nPress Enter to continue...";
+            std::cout << GREEN << "\nPress Enter to continue..." << RESET;
             std::cin.ignore();
             std::cin.get();
         }
@@ -428,28 +436,30 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
 bool loginRegister(UserAuth &userAuth, std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string username, password;
-    std::cout << "Enter Username: ";
+    std::cout << YELLOW << "Enter Username: " << RESET;
     std::cin >> username;
-    std::cout << "Enter Password: ";
+    std::cout << YELLOW << "Enter Password: " << RESET;
     std::cin >> password;
 
     if (userAuth.adminLogin(username, password))
     {
-        std::cout << "Admin Login successful!\n";
+        std::cout << GREEN << "Admin Login successful!\n"
+                  << RESET;
         adminMenu(customers, rooms);
         return true;
     }
 
     else if (userAuth.login(username, password))
     {
-        std::cout << "User Login successful!\n";
+        std::cout << GREEN << "User Login successful!\n"
+                  << RESET;
         userMenu(customers, rooms);
         return true;
     }
     else
     {
         // register
-        std::cout << "Login failed. Do you want to register? (y/n): ";
+        std::cout << RED << "Login failed. Do you want to register? (y/n): " << RESET;
         char registerChoice;
         std::cin >> registerChoice;
 
@@ -460,13 +470,15 @@ bool loginRegister(UserAuth &userAuth, std::vector<Customer> &customers, std::ve
                                       newCustomer.getName(), newCustomer.getGender(),
                                       newCustomer.getAge(), newCustomer.getPhone()))
             {
-                std::cout << "Registration successful!\n";
+                std::cout << GREEN << "Registration successful!\n"
+                          << RESET;
                 userMenu(customers, rooms);
                 return true;
             }
             else
             {
-                std::cout << "Username already exists.\n";
+                std::cout << YELLOW << "Username already exists.\n"
+                          << RESET;
                 return false;
             }
         }
@@ -487,7 +499,7 @@ int main()
     do
     {
         showMainMenu();
-        std::cout << "Choose: ";
+        std::cout << YELLOW << "Choose: " << RESET;
         std::cin >> option;
 
         switch (option)
@@ -497,21 +509,24 @@ int main()
             bool isLogin = loginRegister(userAuth, customers, rooms);
             if (!isLogin)
             {
-                std::cout << "Login failed. Please try again.\n";
+                std::cout << RED << "Login failed. Please try again.\n"
+                          << RESET;
             }
             break;
         }
         case 2:
-            std::cout << "Exiting the program...\n";
+            std::cout << GREEN << "Exiting the program...\n"
+                      << RESET;
             break;
         default:
-            std::cout << "Invalid option. Please try again.\n";
+            std::cout << RED << "Invalid option. Please try again.\n"
+                      << RESET;
             break;
         }
 
         if (option != 2)
         {
-            std::cout << "\nPress Enter to continue...";
+            std::cout << YELLOW << "\nPress Enter to continue..." << RESET;
             std::cin.ignore();
             std::cin.get();
         }
