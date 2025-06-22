@@ -1,4 +1,4 @@
 #pragma once
 #include "Customer.hpp"
-Customer input();
-
+#include <vector>
+Customer input(const std::vector<Customer> &existingCustomers);
