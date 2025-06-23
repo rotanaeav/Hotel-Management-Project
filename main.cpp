@@ -40,7 +40,7 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 {
     if (customers.empty())
     {
-        std::cout << RED << "No customers found.\n";
+        std::cout << RED << "|---> No customers found !\n";
         return;
     }
 
@@ -71,7 +71,7 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
             customers[i].displayRow();
         }
 
-        std::cout << "\n\033[1;36mPress n for next, p for previous, q to quit: \033[0m";
+        std::cout << YELLOW << "|---> Press n for next, p for previous, q to quit: \033[0m";
         std::cin >> next;
 
         if (next == 'n' && currentPage < totalPages - 1)
@@ -87,7 +87,7 @@ void showCustomers(const std::vector<Customer> &customers, int pageSize = 5)
 void deleteCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string input;
-    std::cout << YELLOW << "Enter Customer Name or ID to delete: " << RESET;
+    std::cout << YELLOW << "|---> Enter Customer Name or ID to delete: " << RESET;
     std::cin >> input;
 
     auto it = std::find_if(customers.begin(), customers.end(),
@@ -97,10 +97,10 @@ void deleteCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
                            });
     if (it != customers.end())
     {
-        bool confirmed = confirmYesNo("Are you sure to delete this customer?");
+        bool confirmed = confirmYesNo("\033[31m |---> Are you sure to delete this customer? \033[0m");
         if (!confirmed)
         {
-            std::cout << RED << "Deletion canceled.\n"
+            std::cout << RED << "|---> Deletion canceled.\n"
                       << RESET;
             return;
         }
@@ -125,18 +125,18 @@ void deleteCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
         customers.erase(it);
         saveToFile(customers, "customers.xlsx");
         roomToFile(rooms, "rooms.xlsx");
-        std::cout << GREEN << "Customer deleted successfully!\n";
+        std::cout << GREEN << "|---> Customer deleted successfully!\n";
     }
     else
     {
-        std::cout << RED << "Customer not found!\n";
+        std::cout << RED << "|---> Customer not found !\n";
     }
 }
 
 void searchCustomer(const std::vector<Customer> &customers)
 {
     std::string input;
-    std::cout << YELLOW << "Enter Customer ID or Name to search: " << RESET;
+    std::cout << YELLOW << "|---> Enter Customer ID or Name to search: " << RESET;
     std::cin >> input;
 
     bool found = false;
@@ -144,7 +144,7 @@ void searchCustomer(const std::vector<Customer> &customers)
     {
         if (c.getId() == input || c.getName() == input)
         {
-            std::cout << "\n\033[1;33mCustomer Found:\033[0m\n";
+            std::cout << "\n\033[1;33m|---> Customer Found:\033[0m\n";
             std::cout << "\033[1;36m" << std::left << std::setw(15) << "Customer ID"
                       << std::setw(20) << "Name"
                       << std::setw(10) << "Gender"
@@ -168,42 +168,42 @@ void updateCustomer(std::vector<Customer> &customers)
 {
     system("cls");
     std::string id;
-    std::cout << YELLOW << "Enter Customer ID to update: " << RESET;
+    std::cout << YELLOW << "|---> Enter Customer ID to update: " << RESET;
     std::cin >> id;
 
     for (auto &c : customers)
     {
         if (c.getId() == id)
         {
-            std::cout << YELLOW << "Current Name: " << c.getName() << "\n"
+            std::cout << YELLOW << "|---> Current Name: " << c.getName() << "\n"
                       << RESET;
-            std::cout << YELLOW << "Enter new name (or '.' to keep current): " << RESET;
+            std::cout << YELLOW << "|---> Enter new name (or '.' to keep current): " << RESET;
             std::string newName;
             std::cin >> newName;
             if (newName != ".")
                 c.setName(newName);
 
-            std::cout << YELLOW << "Current Age: " << c.getAge() << "\n"
+            std::cout << YELLOW << "|---> Current Age: " << c.getAge() << "\n"
                       << RESET;
-            std::cout << YELLOW << "Enter new age (or -1 to keep current): " << RESET;
+            std::cout << YELLOW << "|---> Enter new age (or -1 to keep current): " << RESET;
             int newAge;
             std::cin >> newAge;
             if (newAge != -1)
                 c.setAge(newAge);
 
             saveToFile(customers, "customers.xlsx");
-            std::cout << "\033[1;32mCustomer updated successfully.\033[0m\n";
+            std::cout << "\033[1;32m|---> Customer updated successfully.\033[0m\n";
             return;
         }
     }
-    std::cout << "\033[1;31mCustomer not found.\033[0m\n";
+    std::cout << "\033[1;31m|---> Customer not found !\033[0m\n";
 }
 
 void assignRoomToCustomer(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string customerId, roomId;
 
-    std::cout << "Enter Customer ID: ";
+    std::cout << "|---> Enter Customer ID: ";
     std::cin >> customerId;
 
     // Find customer
@@ -215,15 +215,15 @@ void assignRoomToCustomer(std::vector<Customer> &customers, std::vector<Room> &r
 
     if (customerIt == customers.end())
     {
-        std::cout << "\033[1;31mCustomer not found!\033[0m\n";
+        std::cout << "\033[1;31m|---> Customer not found !\033[0m\n";
         return;
     }
 
     // Show available rooms
-    std::cout << "\n\033[1;33mAvailable Rooms:\033[0m\n";
+    std::cout << "\n\033[1;33m|---> Available Rooms:\033[0m\n";
     showRooms(rooms);
 
-    std::cout << YELLOW << "\nEnter Room ID to assign: " << RESET;
+    std::cout << YELLOW << "\n|---> Enter Room ID to assign: " << RESET;
     std::cin >> roomId;
 
     // Find room
@@ -235,13 +235,13 @@ void assignRoomToCustomer(std::vector<Customer> &customers, std::vector<Room> &r
 
     if (roomIt == rooms.end())
     {
-        std::cout << "\033[1;31mRoom not found!\033[0m\n";
+        std::cout << "\033[1;31m|---> Room not found !\033[0m\n";
         return;
     }
 
     if (!roomIt->isAvailable())
     {
-        std::cout << "\033[1;31mRoom is not available!\033[0m\n";
+        std::cout << "\033[1;31m|---> Room is not available !\033[0m\n";
         return;
     }
 
@@ -267,19 +267,19 @@ void assignRoomToCustomer(std::vector<Customer> &customers, std::vector<Room> &r
     saveToFile(customers, "customers.xlsx");
     roomToFile(rooms, "rooms.xlsx");
 
-    std::cout << "\033[1;32mRoom " << roomId << " assigned to customer " << customerId << " successfully!\033[0m\n";
+    std::cout << "\033[1;32m|---> Room " << roomId << " assigned to customer " << customerId << " successfully.\033[0m\n";
 }
 
 void sortCustomers(std::vector<Customer> &customers)
 {
     if (customers.empty())
     {
-        std::cout << "\033[1;31mNo customers to sort.\033[0m\n";
+        std::cout << "\033[1;31m|---> No customers to sort !\033[0m\n";
         return;
     }
 
     int option;
-    std::cout << YELLOW << "Sort by:\n1. Customer ID\n2. Name\n3. Room ID\nEnter choice: " << RESET;
+    std::cout << YELLOW << "|---> Sort by:\n1. Customer ID\n2. Name\n3. Room ID\nEnter choice: " << RESET;
     option = getValidatedChoice(1, 3);
 
     if (option == 1)
@@ -299,11 +299,11 @@ void sortCustomers(std::vector<Customer> &customers)
     }
     else
     {
-        std::cout << GREEN << "Invalid option." << RESET;
+        std::cout << GREEN << "|---> Invalid option." << RESET;
         return;
     }
 
-    std::cout << GREEN << "Customers sorted successfully." << RESET;
+    std::cout << GREEN << "|---> Customers sorted successfully." << RESET;
     showCustomers(customers);
     saveToFile(customers, "customers.xlsx");
 }
@@ -312,10 +312,10 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string roomId;
 
-    std::cout << GREEN << "Available Rooms:" << RESET;
+    std::cout << GREEN << "|---> Available Rooms:" << RESET;
     showRooms(rooms);
 
-    std::cout << YELLOW << "\nEnter Room ID to book: " << RESET;
+    std::cout << YELLOW << "|---> Enter Room ID to book: " << RESET;
     std::cin >> roomId;
 
     auto it = std::find_if(rooms.begin(), rooms.end(), [&](Room &r)
@@ -323,16 +323,18 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
 
     if (it == rooms.end())
     {
-        std::cout << RED << "Room not found." << RESET;
+        std::cout << RED << "|---> Room not found !\n"
+                  << RESET;
         return;
     }
     if (!it->isAvailable())
     {
-        std::cout << RED << "Room is not available." << RESET;
+        std::cout << RED << "|---> Room is not available !\n"
+                  << RESET;
         return;
     }
     std::string username;
-    std::cout << YELLOW << "\nEnter your username: " << RESET;
+    std::cout << YELLOW << "|---> Enter your username: " << RESET;
     std::cin >> username;
 
     auto customerIt = std::find_if(customers.begin(), customers.end(), [&](const Customer &c)
@@ -340,7 +342,8 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
 
     if (customerIt == customers.end())
     {
-        std::cout << RED << "Customer not found!" << RESET;
+        std::cout << RED << "|---> Customer not found !\n"
+                  << RESET;
         return;
     }
     // check old room
@@ -360,7 +363,8 @@ void bookRoom(std::vector<Customer> &customers, std::vector<Room> &rooms)
     saveToFile(customers, "customers.xlsx");
     roomToFile(rooms, "rooms.xlsx");
 
-    std::cout << GREEN << "Room booked successfully!" << RESET;
+    std::cout << GREEN << "|---> Room booked successfully.\n"
+              << RESET;
 }
 
 void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
@@ -369,7 +373,7 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
     do
     {
         showAdminMenu();
-        std::cout << YELLOW << "Enter choice: " << RESET;
+        std::cout << YELLOW << "|---> Enter choice: " << RESET;
         choice = getValidatedChoice(1, 8);
 
         switch (choice)
@@ -379,7 +383,8 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
             Customer newCustomer = input(customers);
             customers.push_back(newCustomer);
             saveToFile(customers, "customers.xlsx");
-            std::cout << GREEN << "Customer added successfully!" << RESET;
+            std::cout << GREEN << "|---> Customer added successfully.\n"
+                      << RESET;
             break;
         }
         case 2:
@@ -415,13 +420,13 @@ void adminMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
         case 8: // Logout
             return;
         default:
-            std::cout << RED << "Invalid choice. Please try again.\n"
+            std::cout << RED << "|---> Invalid choice. Please try again !\n"
                       << RESET;
             break;
         }
 
         // Pause to let user see the result
-        std::cout << GREEN << "\nPress Enter to continue..." << RESET;
+        std::cout << YELLOW << "|---> Press Enter to continue..." << RESET;
         std::cin.ignore();
         std::cin.get();
 
@@ -434,8 +439,8 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
     do
     {
         showUserMenu();
-        std::cout << YELLOW << "Enter choice: " << RESET;
-        choice = getValidatedChoice(1, 3);
+        std::cout << YELLOW << "|---> Enter choice: " << RESET;
+        choice = getValidatedChoice(1, 4);
 
         switch (choice)
         {
@@ -446,44 +451,48 @@ void userMenu(std::vector<Customer> &customers, std::vector<Room> &rooms)
             bookRoom(customers, rooms);
             break;
         case 3:
-            std::cout << GREEN << "Exiting the user menu...\n"
+            // showBookings(booking ,customers, rooms);
+            break;
+        case 4:
+            std::cout << GREEN << "|---> Exiting the user menu...\n"
                       << RESET;
             break;
         default:
-            std::cout << RED << "Invalid choice. Please try again.\n"
+            std::cout << RED << "|---> Invalid choice. Please try again !\n"
                       << RESET;
             break;
         }
 
-        if (choice != 3)
+        if (choice != 4)
         {
-            std::cout << GREEN << "\nPress Enter to continue..." << RESET;
+            std::cout << YELLOW << "|---> Press Enter to continue..." << RESET;
             std::cin.ignore();
             std::cin.get();
         }
 
-    } while (choice != 3);
+    } while (choice != 4);
 }
 
 bool loginRegister(UserAuth &userAuth, std::vector<Customer> &customers, std::vector<Room> &rooms)
 {
     std::string username, password;
-    std::cout << YELLOW << "Enter Username: " << RESET;
+    std::cout << YELLOW << "|---> Enter Username: " << RESET;
     std::cin >> username;
-    std::cout << YELLOW << "Enter Password: " << RESET;
+    std::cout << YELLOW << "|---> Enter Password: " << RESET;
     std::cin >> password;
 
     if (userAuth.adminLogin(username, password))
     {
-        std::cout << GREEN << "Admin Login successful!\n"
+        std::cout << GREEN << "|---> Admin Login successful.\n"
                   << RESET;
         adminMenu(customers, rooms);
         return true;
+        
     }
 
     else if (userAuth.login(username, password))
     {
-        std::cout << GREEN << "User Login successful!\n"
+        std::cout << GREEN << "|---> User Login successful.\n"
                   << RESET;
         userMenu(customers, rooms);
         return true;
@@ -491,7 +500,7 @@ bool loginRegister(UserAuth &userAuth, std::vector<Customer> &customers, std::ve
     else
     {
         // register
-        std::cout << RED << "Login failed. Do you want to register? (y/n): " << RESET;
+        std::cout << RED << "|---> Login failed. Do you want to register? (y/n): " << RESET;
         char registerChoice;
         std::cin >> registerChoice;
 
@@ -502,19 +511,24 @@ bool loginRegister(UserAuth &userAuth, std::vector<Customer> &customers, std::ve
                                       newCustomer.getName(), newCustomer.getGender(),
                                       newCustomer.getAge(), newCustomer.getPhone()))
             {
-                std::cout << GREEN << "Registration successful!\n"
+                std::cout << GREEN << "|---> Registration successful.\n"
                           << RESET;
                 userMenu(customers, rooms);
                 return true;
             }
             else
             {
-                std::cout << YELLOW << "Username already exists.\n"
+                std::cout << YELLOW << "|---> Username already exists.\n"
                           << RESET;
                 return false;
             }
         }
     }
+
+    // Pause to let user see the result
+    std::cout << YELLOW << "|---> Press Enter to continue..." << RESET;
+    std::cin.ignore();
+    std::cin.get();
 
     return false;
 }
@@ -531,7 +545,7 @@ int main()
     do
     {
         showMainMenu();
-        std::cout << YELLOW << "Choose: " << RESET;
+        std::cout << YELLOW << "|---> Choose: " << RESET;
         option = getValidatedChoice(1, 2);
 
         switch (option)
@@ -541,24 +555,24 @@ int main()
             bool isLogin = loginRegister(userAuth, customers, rooms);
             if (!isLogin)
             {
-                std::cout << RED << "Login failed. Please try again.\n"
+                std::cout << RED << "|---> Login failed. Please try again !\n"
                           << RESET;
             }
             break;
         }
         case 2:
-            std::cout << GREEN << "Exiting the program...\n"
+            std::cout << GREEN << "|---> Exiting the program...\n"
                       << RESET;
             break;
         default:
-            std::cout << RED << "Invalid option. Please try again.\n"
+            std::cout << RED << "|---> Invalid option. Please try again !\n"
                       << RESET;
             break;
         }
 
         if (option != 2)
         {
-            std::cout << YELLOW << "\nPress Enter to continue..." << RESET;
+            std::cout << YELLOW << "|---> Press Enter to continue..." << RESET;
             std::cin.ignore();
             std::cin.get();
         }
@@ -570,3 +584,13 @@ int main()
 
     return 0;
 }
+
+/* int main() {
+    vector<Booking> bookings = {
+    };
+
+    showBookings(bookings);
+
+    return 0;
+}
+*/

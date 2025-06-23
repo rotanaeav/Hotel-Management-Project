@@ -1,6 +1,5 @@
 #include "User.hpp"
 #include "ExcelUtils.hpp"
-
 UserAuth::UserAuth()
 {
     loadUsersFromFile("customers.xlsx");

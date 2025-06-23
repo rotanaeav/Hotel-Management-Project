@@ -22,7 +22,7 @@ bool isValidName(const std::string &name)
 
 bool isValidGender(const std::string &gender)
 {
-    return gender == "Male" || gender == "Female" || gender == "Other";
+    return gender == "Male" || gender == "Female" || gender == "M" || gender == "F" || gender == "Other";
 }
 
 bool isValidAge(int age)
@@ -55,12 +55,12 @@ int getValidatedChoice(int min, int max)
         {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
-            std::cout << RED << "=====> Invalid input. Please enter a number between <====="
+            std::cout << RED << "|---> Invalid input. Please enter a number between !"
                       << min << " and " << max << ": \033[0m";
         }
         else if (choice < min || choice > max)
         {
-            std::cout << RED << "=====> Out of range. Enter a number between <====="
+            std::cout << RED << "|---> Out of range. Enter a number between !"
                       << min << " and " << max << ": \033[0m";
         }
         else
